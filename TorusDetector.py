@@ -1,5 +1,6 @@
 import cv2
 import numpy as np
+
 from typing import Tuple, Optional
 from dataclasses import dataclass
 
