@@ -79,7 +79,7 @@ if __name__ == "__main__":
     td = TorusDetector(tdoptions)
 
     # Collect images from data set.
-    found_images = glob.glob("data/color*.png")
+    found_images = glob.glob("data/*color*.png")
     out_folder = "out"
 
     for img_path in found_images:
@@ -106,7 +106,7 @@ if __name__ == "__main__":
         cv2.putText(blobs, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, blob_color, 2)
 
         # Show image with circles.
-        cv2.imshow("Filtering Circular Blobs Only", td.masked_result)
+        cv2.imshow("Filtering Circular Blobs Only", np.concatenate([td.masked_result,image ]))
         if cv2.waitKey(0) == ord("q"):
             break
     cv2.destroyAllWindows()
