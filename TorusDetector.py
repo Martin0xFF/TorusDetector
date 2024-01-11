@@ -1,4 +1,5 @@
 import cv2
+import glob
 import numpy as np
 
 from typing import Tuple, Optional
@@ -31,15 +32,26 @@ class TorusDetector:
             self.config = config
         else:
             self.config = TorusDetectorOptions()
+        self.masked_result = None
 
     def generate_color_mask(self, image_bgr):
-        hsv = cv2.cvtColor(image_bgr, cv2.COLOR_BGR2HSV)
+        img_blur = cv2.medianBlur(image_bgr, self.config.blur_kernel_size)
+        hsv = cv2.cvtColor(img_blur, cv2.COLOR_BGR2HSV)
         mask = cv2.inRange(hsv, self.config.hsv_start, self.config.hsv_end)
         return mask
 
     def __call__(self, input_image):
         mask = self.generate_color_mask(input_image)
         result = cv2.bitwise_and(input_image, input_image, mask=mask)
+        errosion_kernel = np.ones((7,7))
+        result = cv2.erode(result, errosion_kernel)
+        errosion_kernel = np.ones((3,3))
+        result = cv2.dilate(result, errosion_kernel)
+
+
+        # Debug masked image.
+        self.masked_result = result
+
         result = cv2.medianBlur(
             cv2.cvtColor(result, cv2.COLOR_BGR2GRAY), self.config.blur_kernel_size
         )
@@ -59,10 +71,19 @@ class TorusDetector:
 
 
 if __name__ == "__main__":
-    vid = cv2.VideoCapture(0)
-    td = TorusDetector()
-    while True:
-        ret, image = vid.read()
+    tdoptions = TorusDetectorOptions(
+        hsv_start=(7, percent_to_u8(40), percent_to_u8(35)),
+        hsv_end=(15, percent_to_u8(100), percent_to_u8(100)),
+        blur_kernel_size=9,
+    )
+    td = TorusDetector(tdoptions)
+
+    # Collect images from data set.
+    found_images = glob.glob("data/color*.png")
+    out_folder = "out"
+
+    for img_path in found_images:
+        image = cv2.imread(img_path, cv2.IMREAD_COLOR)
         circles = td(image)
 
         # Visualize the Circles.
@@ -85,9 +106,7 @@ if __name__ == "__main__":
         cv2.putText(blobs, text, (20, 550), cv2.FONT_HERSHEY_SIMPLEX, 1, blob_color, 2)
 
         # Show image with circles.
-        cv2.imshow("Filtering Circular Blobs Only", blobs)
-        if cv2.waitKey(10) == ord("q"):
+        cv2.imshow("Filtering Circular Blobs Only", td.masked_result)
+        if cv2.waitKey(0) == ord("q"):
             break
-
-    vid.release()
     cv2.destroyAllWindows()
