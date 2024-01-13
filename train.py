@@ -43,8 +43,6 @@ class TrainRig:
         for i, data in enumerate(self.training_loader):
             inputs, labels = data
             self.optimizer.zero_grad()
-            print(labels.shape)
-            print(model(inputs).shape)
             # Compute the loss and its gradients
             loss = self.loss_fn(model(inputs), labels)
             loss.backward()
@@ -109,16 +107,15 @@ class SingleTorus(nn.Module):
     def __init__(self):
         super(SingleTorus, self).__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
-        self.pool = nn.MaxPool2d(2, 2)
         self.conv2 = nn.Conv2d(6, 20, 5)
-        self.fc1 = nn.Linear(4* 57 * 89, 120)
+        self.fc1 = nn.Linear(4 * 360 * 232, 120)
         self.fc2 = nn.Linear(120, 84)
         self.fc3 = nn.Linear(84, 5)
 
     def forward(self, x):
-        x = self.pool(F.relu(self.conv1(x)))
-        x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, 5, 4* 57 * 89)
+        x = F.relu(self.conv1(x))
+        x = F.relu(self.conv2(x))
+        x = x.view(-1, 5, 4 * 360 * 232)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
@@ -217,7 +214,7 @@ if __name__ == "__main__":
         annotations = None
         with open(json_path) as js:
             annotations = json.load(js)
-        tloader = DataLoader(TorusData(annotations), batch_size=20)
+        tloader = DataLoader(TorusData(annotations), batch_size=40)
 
         to = TrainOptions(
             tloader,
@@ -229,7 +226,7 @@ if __name__ == "__main__":
         )
 
         tr = TrainRig(to)
-        tr.train(100)
+        tr.train(500)
 
         model_path = "model.pt"
         torch.save(model.state_dict(), model_path)
