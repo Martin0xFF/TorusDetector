@@ -147,7 +147,7 @@ def Inspect(model, path_glob="data/*color*.png"):
             draw_handle = ImageDraw.Draw(im)
             draw_handle.rectangle(bounds, outline="red")
             im = im.rotate(180,Image.NEAREST, expand = 1)
-            im.show()
+            im.save(img_path.replace('data', 'output'))
 
 
 if __name__ == "__main__":
