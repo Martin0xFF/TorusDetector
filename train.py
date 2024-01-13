@@ -14,8 +14,9 @@ from PIL import Image, ImageDraw
 
 
 class TrainOptions:
-    def __init__(self, tl, md, lf, opt, tb, log):
-        self.training_loader = tl
+    def __init__(self, train, test, md, lf, opt, tb, log):
+        self.training_loader = train
+        self.testing_loader = test
         self.model = md
         self.loss_fn = lf
         self.optimizer = opt
@@ -30,6 +31,7 @@ class TrainRig:
         self.model = self.options.model
         self.loss_fn = self.options.loss_fn
         self.training_loader = self.options.training_loader
+        self.testing_loader = self.options.testing_loader
         self.optimizer = self.options.optimizer
         self.log = self.options.log
         self.tb_writer = self.options.tb_writer
@@ -37,6 +39,7 @@ class TrainRig:
     def train(self, epochs):
         for epoch in range(epochs):
             self._train_one_epoch(epoch)
+            self.test()
 
     def _train_one_epoch(self, epoch_index):
         batch_loss = 0.0
@@ -59,6 +62,20 @@ class TrainRig:
             debug_loss = 0.0
         return batch_loss
 
+    def test(self):
+        batch_loss = 0.0
+        for i, data in enumerate(self.testing_loader):
+            inputs, labels = data
+            print(labels.shape)
+            print(model(inputs).shape)
+            # Compute the loss and its gradients
+            loss = self.loss_fn(model(inputs), labels)
+
+            batch_loss += loss
+        if self.log:
+            avg_loss = batch_loss / (i + 1)  # loss per batch
+            print(f"\nTest loss: {avg_loss}")
+        return batch_loss
 
 def rename_images(path_glob="data/*bayer*.png", new_name="bayer", start_index=0):
     # Rename images from data set.
@@ -214,10 +231,13 @@ if __name__ == "__main__":
         annotations = None
         with open(json_path) as js:
             annotations = json.load(js)
-        tloader = DataLoader(TorusData(annotations), batch_size=40)
+
+        training_loader = DataLoader(TorusData(dict(list(annotations.items())[20:])), batch_size=20)
+        testing_loader = DataLoader(TorusData(dict(list(annotations.items())[:20])), batch_size=20)
 
         to = TrainOptions(
-            tloader,
+            training_loader,
+            testing_loader,
             model,
             torch.nn.MSELoss(),
             opt,
@@ -237,7 +257,6 @@ if __name__ == "__main__":
         Inspect(st)
 
     elif args.task == "auto-annotation":
-        # TODO(ttran): Support auto annotation feature
         st = SingleTorus()
         st.load_state_dict(torch.load("model.pt"))
         st.eval()
