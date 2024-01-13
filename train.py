@@ -166,6 +166,24 @@ def AutoAnnotate(model, path_glob="data/*color*.png"):
 
     with open("output/boxes.json", "w") as file:
         file.write(json.dumps(boxes))
+def AutoAnnotate(model, path_glob="data/*color*.png"):
+    found_images = glob.glob(path_glob)
+    boxes = []
+
+    for i, img_path in enumerate(found_images):
+        print(f"Viewing Image: {i}")
+        out_box = model(LoadImage(img_path)).type(torch.int32)[0, :].numpy()
+        x, y, w, h = out_box[:4]
+
+        if (out_box < 0).any():
+            print(f"Skipping: {img_path} because bounds are negative.")
+            boxes.append([-1, -1, -1, -1])
+            continue
+        else:
+            boxes.append([int(l) for l in out_box])
+
+    with open("output/boxes.json", "w") as file:
+        file.write(json.dumps(boxes))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
