@@ -1,0 +1,1496 @@
+{
+    "color_000000.png144399": {
+        "filename": "color_000000.png",
+        "size": 144399,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 81,
+                    "y": 46,
+                    "width": 38,
+                    "height": 13
+                },
+                "region_attributes": {
+                    "name": "torus\n",
+                    "type": "bird",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 172,
+                    "y": 43,
+                    "width": 58,
+                    "height": 17
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "bird",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000001.png142706": {
+        "filename": "color_000001.png",
+        "size": 142706,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 82,
+                    "y": 45,
+                    "width": 37,
+                    "height": 15
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "bird",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 272,
+                    "y": 53,
+                    "width": 52,
+                    "height": 17
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "bird",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000002.png144384": {
+        "filename": "color_000002.png",
+        "size": 144384,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 102,
+                    "y": 53,
+                    "width": 27,
+                    "height": 12
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "bird",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 230,
+                    "y": 64,
+                    "width": 32,
+                    "height": 8
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "bird",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000003.png144310": {
+        "filename": "color_000003.png",
+        "size": 144310,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 103,
+                    "y": 54,
+                    "width": 27,
+                    "height": 11
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "bird",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 170,
+                    "y": 53,
+                    "width": 38,
+                    "height": 23
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "bird",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 229,
+                    "y": 61,
+                    "width": 33,
+                    "height": 11
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "bird",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000004.png143531": {
+        "filename": "color_000004.png",
+        "size": 143531,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 101,
+                    "y": 54,
+                    "width": 28,
+                    "height": 10
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 227,
+                    "y": 62,
+                    "width": 36,
+                    "height": 10
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000005.png143138": {
+        "filename": "color_000005.png",
+        "size": 143138,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 133,
+                    "y": 35,
+                    "width": 59,
+                    "height": 19
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 3,
+                    "y": 6,
+                    "width": 89,
+                    "height": 22
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 296,
+                    "y": 13,
+                    "width": 69,
+                    "height": 33
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000006.png140538": {
+        "filename": "color_000006.png",
+        "size": 140538,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 1,
+                    "y": 30,
+                    "width": 40,
+                    "height": 14
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000007.png145546": {
+        "filename": "color_000007.png",
+        "size": 145546,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 88,
+                    "y": 52,
+                    "width": 28,
+                    "height": 9
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 228,
+                    "y": 62,
+                    "width": 35,
+                    "height": 11
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 228,
+                    "y": 92,
+                    "width": 24,
+                    "height": 20
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000008.png144720": {
+        "filename": "color_000008.png",
+        "size": 144720,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 91,
+                    "y": 53,
+                    "width": 29,
+                    "height": 8
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 228,
+                    "y": 61,
+                    "width": 33,
+                    "height": 12
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000009.png144588": {
+        "filename": "color_000009.png",
+        "size": 144588,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 2,
+                    "y": 30,
+                    "width": 43,
+                    "height": 13
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 174,
+                    "y": 42,
+                    "width": 55,
+                    "height": 18
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000010.png144545": {
+        "filename": "color_000010.png",
+        "size": 144545,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 104,
+                    "y": 55,
+                    "width": 27,
+                    "height": 9
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 226,
+                    "y": 61,
+                    "width": 38,
+                    "height": 12
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 154,
+                    "y": 108,
+                    "width": 19,
+                    "height": 19
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000011.png139751": {
+        "filename": "color_000011.png",
+        "size": 139751,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 1,
+                    "y": 29,
+                    "width": 41,
+                    "height": 14
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 330,
+                    "y": 48,
+                    "width": 37,
+                    "height": 18
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000012.png143639": {
+        "filename": "color_000012.png",
+        "size": 143639,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 262,
+                    "y": 43,
+                    "width": 68,
+                    "height": 17
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 82,
+                    "y": 43,
+                    "width": 30,
+                    "height": 11
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000013.png143594": {
+        "filename": "color_000013.png",
+        "size": 143594,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 104,
+                    "y": 55,
+                    "width": 24,
+                    "height": 9
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 228,
+                    "y": 62,
+                    "width": 34,
+                    "height": 10
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000014.png152828": {
+        "filename": "color_000014.png",
+        "size": 152828,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 191,
+                    "y": 88,
+                    "width": 56,
+                    "height": 15
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000015.png153737": {
+        "filename": "color_000015.png",
+        "size": 153737,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 183,
+                    "y": 97,
+                    "width": 43,
+                    "height": 10
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000016.png138915": {
+        "filename": "color_000016.png",
+        "size": 138915,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 152,
+                    "y": 10,
+                    "width": 184,
+                    "height": 83
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000017.png155771": {
+        "filename": "color_000017.png",
+        "size": 155771,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 107,
+                    "y": 2,
+                    "width": 198,
+                    "height": 47
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000018.png153484": {
+        "filename": "color_000018.png",
+        "size": 153484,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 149,
+                    "y": 103,
+                    "width": 40,
+                    "height": 10
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000019.png140897": {
+        "filename": "color_000019.png",
+        "size": 140897,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 147,
+                    "y": 2,
+                    "width": 184,
+                    "height": 52
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000020.png153075": {
+        "filename": "color_000020.png",
+        "size": 153075,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 193,
+                    "y": 83,
+                    "width": 63,
+                    "height": 14
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000021.png156420": {
+        "filename": "color_000021.png",
+        "size": 156420,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 91,
+                    "y": 1,
+                    "width": 213,
+                    "height": 41
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000022.png158403": {
+        "filename": "color_000022.png",
+        "size": 158403,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 183,
+                    "y": 60,
+                    "width": 104,
+                    "height": 65
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000023.png153230": {
+        "filename": "color_000023.png",
+        "size": 153230,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 192,
+                    "y": 89,
+                    "width": 53,
+                    "height": 15
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000024.png154787": {
+        "filename": "color_000024.png",
+        "size": 154787,
+        "regions": [],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000025.png153372": {
+        "filename": "color_000025.png",
+        "size": 153372,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 295,
+                    "y": 83,
+                    "width": 61,
+                    "height": 15
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000026.png148171": {
+        "filename": "color_000026.png",
+        "size": 148171,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 219,
+                    "y": 54,
+                    "width": 107,
+                    "height": 27
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000027.png157756": {
+        "filename": "color_000027.png",
+        "size": 157756,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 168,
+                    "y": 57,
+                    "width": 103,
+                    "height": 27
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000028.png158056": {
+        "filename": "color_000028.png",
+        "size": 158056,
+        "regions": [],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000029.png148348": {
+        "filename": "color_000029.png",
+        "size": 148348,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 61,
+                    "y": 54,
+                    "width": 113,
+                    "height": 29
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000030.png158041": {
+        "filename": "color_000030.png",
+        "size": 158041,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 297,
+                    "y": 85,
+                    "width": 61,
+                    "height": 14
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000031.png146334": {
+        "filename": "color_000031.png",
+        "size": 146334,
+        "regions": [],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000032.png154013": {
+        "filename": "color_000032.png",
+        "size": 154013,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 173,
+                    "y": 92,
+                    "width": 47,
+                    "height": 13
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000033.png139984": {
+        "filename": "color_000033.png",
+        "size": 139984,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 148,
+                    "y": 2,
+                    "width": 182,
+                    "height": 48
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000034.png144650": {
+        "filename": "color_000034.png",
+        "size": 144650,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 144,
+                    "y": 1,
+                    "width": 222,
+                    "height": 75
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000035.png142730": {
+        "filename": "color_000035.png",
+        "size": 142730,
+        "regions": [],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000036.png155237": {
+        "filename": "color_000036.png",
+        "size": 155237,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 137,
+                    "y": 82,
+                    "width": 66,
+                    "height": 16
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000037.png156359": {
+        "filename": "color_000037.png",
+        "size": 156359,
+        "regions": [],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000038.png158443": {
+        "filename": "color_000038.png",
+        "size": 158443,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 172,
+                    "y": 93,
+                    "width": 48,
+                    "height": 11
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000039.png153871": {
+        "filename": "color_000039.png",
+        "size": 153871,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 135,
+                    "y": 82,
+                    "width": 70,
+                    "height": 14
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000040.png152774": {
+        "filename": "color_000040.png",
+        "size": 152774,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 206,
+                    "y": 69,
+                    "width": 90,
+                    "height": 22
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000041.png144131": {
+        "filename": "color_000041.png",
+        "size": 144131,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 264,
+                    "y": 43,
+                    "width": 64,
+                    "height": 17
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 153,
+                    "y": 62,
+                    "width": 16,
+                    "height": 9
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    },
+    "color_000042.png141540": {
+        "filename": "color_000042.png",
+        "size": 141540,
+        "regions": [
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 261,
+                    "y": 44,
+                    "width": 69,
+                    "height": 19
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            },
+            {
+                "shape_attributes": {
+                    "name": "rect",
+                    "x": 174,
+                    "y": 60,
+                    "width": 30,
+                    "height": 10
+                },
+                "region_attributes": {
+                    "name": "not_defined",
+                    "type": "unknown",
+                    "image_quality": {
+                        "good": true,
+                        "frontal": true,
+                        "good_illumination": true
+                    }
+                }
+            }
+        ],
+        "file_attributes": {
+            "caption": "",
+            "public_domain": "no",
+            "image_url": ""
+        }
+    }
+}
