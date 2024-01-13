@@ -2,6 +2,7 @@ from dataclasses import dataclass
 import os
 import glob
 import json
+import argparse
 
 import torch
 import torch.nn as nn
@@ -133,51 +134,63 @@ def Inspect(model, path_glob="data/*color*.png"):
     for i, img_path in enumerate(found_images):
         print(f"Viewing Image: {i}")
         out_box = model(LoadImage(img_path)).type(torch.int32)[0, :].numpy()
-        x,y,w,h = out_box[:4]
-        bounds = ((x,y), (x+w,y+h))
+        x, y, w, h = out_box[:4]
+        bounds = ((x, y), (x + w, y + h))
         if (out_box < 0).any():
-            print(f'Skipping: {img_path} because bounds are negative.')
+            print(f"Skipping: {img_path} because bounds are negative.")
             continue
 
         with Image.open(img_path) as im:
             draw_handle = ImageDraw.Draw(im)
             draw_handle.rectangle(bounds, outline="red")
-            im = im.rotate(180,Image.NEAREST, expand = 1)
-            im.save(img_path.replace('data', 'output'))
+            im = im.rotate(180, Image.NEAREST, expand=1)
+            im.save(img_path.replace("data", "output"))
 
 
 if __name__ == "__main__":
-    st = SingleTorus()
-    st.load_state_dict(torch.load("model.pt"))
-    st.eval()
-    Inspect(st)
-
-    """
-    # Learning Rate
-    alpha = 1e-4
-    num_anchors = 1
-    model = SingleTorus()
-    loss = torch.nn.MSELoss()
-    opt = torch.optim.Adam(model.parameters(), lr=alpha)
-
-    json_path = "data/torus_ann.json"
-    annotations = None
-    with open(json_path) as js:
-        annotations = json.load(js)
-    tloader = DataLoader(TorusData(annotations), batch_size=20)
-
-    to = TrainOptions(
-        tloader,
-        model,
-        torch.nn.MSELoss(),
-        opt,
-        None,
-        True,
+    parser = argparse.ArgumentParser(
+        prog="train", description="trains basic torus detectors for fun", epilog="---"
     )
 
-    tr = TrainRig(to)
-    tr.train(100)
+    parser.add_argument(
+        "-t",
+        "--task",
+        required=True,
+        choices=["train", "inspect"],
+    )
+    args = parser.parse_args()
 
-    model_path = "model.pt"
-    torch.save(model.state_dict(), model_path)
-    """
+    if args.task == "train":
+        # Learning Rate
+        alpha = 1e-4
+        num_anchors = 1
+        model = SingleTorus()
+        loss = torch.nn.MSELoss()
+        opt = torch.optim.Adam(model.parameters(), lr=alpha)
+
+        json_path = "data/torus_ann.json"
+        annotations = None
+        with open(json_path) as js:
+            annotations = json.load(js)
+        tloader = DataLoader(TorusData(annotations), batch_size=20)
+
+        to = TrainOptions(
+            tloader,
+            model,
+            torch.nn.MSELoss(),
+            opt,
+            None,
+            True,
+        )
+
+        tr = TrainRig(to)
+        tr.train(100)
+
+        model_path = "model.pt"
+        torch.save(model.state_dict(), model_path)
+
+    elif args.task == "inspect":
+        st = SingleTorus()
+        st.load_state_dict(torch.load("model.pt"))
+        st.eval()
+        Inspect(st)
