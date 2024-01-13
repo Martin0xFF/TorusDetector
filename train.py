@@ -61,14 +61,14 @@ class TrainRig:
         return batch_loss
 
 
-def rename_images(path_glob="data/*bayer*.png", new_name="bayer"):
+def rename_images(path_glob="data/*bayer*.png", new_name="bayer", start_index=0):
     # Rename images from data set.
     found_images = glob.glob(path_glob)
 
     for i, img_path in enumerate(found_images):
         img_data = None
         new_img_path = os.path.join(
-            os.path.dirname(img_path), f"{new_name}_{i:06d}.png"
+            os.path.dirname(img_path), f"{new_name}_{i+start_index:06d}.png"
         )
         os.rename(img_path, new_img_path)
 
@@ -128,7 +128,6 @@ class SingleTorus(nn.Module):
 
 
 def Inspect(model, path_glob="data/*color*.png"):
-    # Rename images from data set.
     found_images = glob.glob(path_glob)
 
     for i, img_path in enumerate(found_images):
@@ -156,7 +155,7 @@ if __name__ == "__main__":
         "-t",
         "--task",
         required=True,
-        choices=["train", "inspect"],
+        choices=["train", "inspect", "rename"],
     )
     args = parser.parse_args()
 
@@ -194,6 +193,14 @@ if __name__ == "__main__":
         st.load_state_dict(torch.load("model.pt"))
         st.eval()
         Inspect(st)
-    elif args.task == 'auto-annotation':
+
+    elif args.task == "auto-annotation":
         # TODO(ttran): Support auto annotation feature
         pass
+
+    elif args.task == "rename":
+        rename_images(
+            path_glob="new_data/*color*.png",
+            new_name="color",
+            start_index=43,
+        )
