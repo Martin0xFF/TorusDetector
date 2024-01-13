@@ -43,7 +43,8 @@ class TrainRig:
         for i, data in enumerate(self.training_loader):
             inputs, labels = data
             self.optimizer.zero_grad()
-
+            print(labels.shape)
+            print(model(inputs).shape)
             # Compute the loss and its gradients
             loss = self.loss_fn(model(inputs), labels)
             loss.backward()
@@ -87,17 +88,14 @@ class TorusData(Dataset):
 
 
 def LoadBox(annotation_region):
-    if len(annotation_region) != 0:
-        box = annotation_region[0]["shape_attributes"]
-        box_data = torch.tensor(
-            [box["x"], box["y"], box["width"], box["height"]],
-            dtype=torch.float32,
-        )
-    else:
-        box_data = torch.zeros(
-            (4,),
-            dtype=torch.float32,
-        )
+    box_data = torch.zeros(5, 5)
+    for i, region in enumerate(annotation_region):
+        box = region["shape_attributes"]
+        box_data[i, :] = torch.tensor(
+        [box["x"], box["y"], box["width"], box["height"], 1],
+        dtype=torch.float32,)
+        if i > 4:
+            break
     return box_data
 
 
@@ -112,15 +110,15 @@ class SingleTorus(nn.Module):
         super(SingleTorus, self).__init__()
         self.conv1 = nn.Conv2d(3, 6, 5)
         self.pool = nn.MaxPool2d(2, 2)
-        self.conv2 = nn.Conv2d(6, 16, 5)
-        self.fc1 = nn.Linear(16 * 57 * 89, 120)
+        self.conv2 = nn.Conv2d(6, 20, 5)
+        self.fc1 = nn.Linear(4* 57 * 89, 120)
         self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 4)
+        self.fc3 = nn.Linear(84, 5)
 
     def forward(self, x):
         x = self.pool(F.relu(self.conv1(x)))
         x = self.pool(F.relu(self.conv2(x)))
-        x = x.view(-1, 16 * 57 * 89)
+        x = x.view(-1, 5, 4* 57 * 89)
         x = F.relu(self.fc1(x))
         x = F.relu(self.fc2(x))
         x = self.fc3(x)
@@ -134,15 +132,20 @@ def Inspect(model, path_glob="data/*color*.png"):
     for i, img_path in enumerate(found_images):
         print(f"Viewing Image: {i}")
         out_box = model(LoadImage(img_path)).type(torch.int32)[0, :].numpy()
-        x, y, w, h = out_box[:4]
-        bounds = ((x, y), (x + w, y + h))
-        if (out_box < 0).any():
-            print(f"Skipping: {img_path} because bounds are negative.")
-            continue
-
         with Image.open(img_path) as im:
-            draw_handle = ImageDraw.Draw(im)
-            draw_handle.rectangle(bounds, outline="red")
+            for i in range(5):
+                x, y, w, h = out_box[i,:4]
+                bounds = ((x, y), (x + w, y + h))
+                if w <=0  or h<=0:
+                    continue
+                print(bounds)
+
+                if (out_box[i,:4] < 0).any():
+                    print(f"Skipping: {img_path} because bounds are negative.")
+                    continue
+
+                draw_handle = ImageDraw.Draw(im)
+                draw_handle.rectangle(bounds, outline="red")
             im = im.rotate(180, Image.NEAREST, expand=1)
             im.save(img_path.replace("data", "output"))
 
