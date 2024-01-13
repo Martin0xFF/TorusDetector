@@ -194,3 +194,6 @@ if __name__ == "__main__":
         st.load_state_dict(torch.load("model.pt"))
         st.eval()
         Inspect(st)
+    elif args.task == 'auto-annotation':
+        # TODO(ttran): Support auto annotation feature
+        pass
