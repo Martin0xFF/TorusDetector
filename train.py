@@ -133,12 +133,8 @@ def Inspect(model, path_glob="data/*color*.png"):
     for i, img_path in enumerate(found_images):
         print(f"Viewing Image: {i}")
         out_box = model(LoadImage(img_path)).type(torch.int32)[0, :].numpy()
-        print(f"Box at: {out_box}")
         x,y,w,h = out_box[:4]
         bounds = ((x,y), (x+w,y+h))
-        print(bounds)
-
-
         if (out_box < 0).any():
             print(f'Skipping: {img_path} because bounds are negative.')
             continue
