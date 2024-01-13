@@ -148,6 +148,24 @@ def Inspect(model, path_glob="data/*color*.png"):
             im = im.rotate(180, Image.NEAREST, expand=1)
             im.save(img_path.replace("data", "output"))
 
+def AutoAnnotate(model, path_glob="data/*color*.png"):
+    found_images = glob.glob(path_glob)
+    boxes = []
+
+    for i, img_path in enumerate(found_images):
+        print(f"Viewing Image: {i}")
+        out_box = model(LoadImage(img_path)).type(torch.int32)[0, :].numpy()
+        x, y, w, h = out_box[:4]
+
+        if (out_box < 0).any():
+            print(f"Skipping: {img_path} because bounds are negative.")
+            boxes.append([-1, -1, -1, -1])
+            continue
+        else:
+            boxes.append([int(l) for l in out_box])
+
+    with open("output/boxes.json", "w") as file:
+        file.write(json.dumps(boxes))
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -158,7 +176,7 @@ if __name__ == "__main__":
         "-t",
         "--task",
         required=True,
-        choices=["train", "inspect", "rename"],
+        choices=["train", "inspect", "auto-annotation", "rename"],
     )
     args = parser.parse_args()
 
@@ -190,7 +208,6 @@ if __name__ == "__main__":
 
         model_path = "model.pt"
         torch.save(model.state_dict(), model_path)
-
     elif args.task == "inspect":
         st = SingleTorus()
         st.load_state_dict(torch.load("model.pt"))
@@ -199,8 +216,10 @@ if __name__ == "__main__":
 
     elif args.task == "auto-annotation":
         # TODO(ttran): Support auto annotation feature
-        pass
-
+        st = SingleTorus()
+        st.load_state_dict(torch.load("model.pt"))
+        st.eval()
+        AutoAnnotate(st)
     elif args.task == "rename":
         rename_images(
             path_glob="new_data/*color*.png",
