@@ -3,6 +3,7 @@ import os
 import glob
 import json
 import argparse
+import random
 
 import torch
 import torch.nn as nn
@@ -37,9 +38,19 @@ class TrainRig:
         self.tb_writer = self.options.tb_writer
 
     def train(self, epochs):
+        best_train_loss = 0.0
+        best_test_loss = 0.0
         for epoch in range(epochs):
-            self._train_one_epoch(epoch)
-            self.test()
+            cur_train_loss = self._train_one_epoch(epoch)
+            if cur_train_loss < best_train_loss:
+                best_train_loss = cur_train_loss
+                torch.save(self.model.state_dict(), "train_model.pt")
+
+
+            cur_test_loss = self.test()
+            if cur_test_loss < best_test_loss:
+                best_test_loss = cur_test_loss
+                torch.save(self.model.state_dict(), "test_model.pt")
 
     def _train_one_epoch(self, epoch_index):
         batch_loss = 0.0
@@ -66,8 +77,6 @@ class TrainRig:
         batch_loss = 0.0
         for i, data in enumerate(self.testing_loader):
             inputs, labels = data
-            print(labels.shape)
-            print(model(inputs).shape)
             # Compute the loss and its gradients
             loss = self.loss_fn(model(inputs), labels)
 
@@ -76,6 +85,7 @@ class TrainRig:
             avg_loss = batch_loss / (i + 1)  # loss per batch
             print(f"\nTest loss: {avg_loss}")
         return batch_loss
+
 
 def rename_images(path_glob="data/*bayer*.png", new_name="bayer", start_index=0):
     # Rename images from data set.
@@ -107,8 +117,9 @@ def LoadBox(annotation_region):
     for i, region in enumerate(annotation_region):
         box = region["shape_attributes"]
         box_data[i, :] = torch.tensor(
-        [box["x"], box["y"], box["width"], box["height"], 1],
-        dtype=torch.float32,)
+            [box["x"], box["y"], box["width"], box["height"], 1],
+            dtype=torch.float32,
+        )
         if i > 4:
             break
     return box_data
@@ -147,13 +158,13 @@ def Inspect(model, path_glob="data/*color*.png"):
         out_box = model(LoadImage(img_path)).type(torch.int32)[0, :].numpy()
         with Image.open(img_path) as im:
             for i in range(5):
-                x, y, w, h = out_box[i,:4]
+                x, y, w, h = out_box[i, :4]
                 bounds = ((x, y), (x + w, y + h))
-                if w <=0  or h<=0:
+                if w <= 0 or h <= 0:
                     continue
                 print(bounds)
 
-                if (out_box[i,:4] < 0).any():
+                if (out_box[i, :4] < 0).any():
                     print(f"Skipping: {img_path} because bounds are negative.")
                     continue
 
@@ -161,6 +172,7 @@ def Inspect(model, path_glob="data/*color*.png"):
                 draw_handle.rectangle(bounds, outline="red")
             im = im.rotate(180, Image.NEAREST, expand=1)
             im.save(img_path.replace("data", "output"))
+
 
 def AutoAnnotate(model, path_glob="data/*color*.png"):
     found_images = glob.glob(path_glob)
@@ -181,6 +193,7 @@ def AutoAnnotate(model, path_glob="data/*color*.png"):
     with open("output/boxes.json", "w") as file:
         file.write(json.dumps(boxes))
 
+
 def Review(path_glob="data/*color*.png"):
     boxes = {}
 
@@ -194,17 +207,21 @@ def Review(path_glob="data/*color*.png"):
         else:
             with Image.open(img_path) as im:
                 draw_handle = ImageDraw.Draw(im)
-                draw_handle.rectangle(((box[0], box[1]), (box[0] + box[2], box[1] + box[3])), outline="red")
+                draw_handle.rectangle(
+                    ((box[0], box[1]), (box[0] + box[2], box[1] + box[3])),
+                    outline="red",
+                )
                 im = im.rotate(180, Image.NEAREST, expand=1)
                 im.show()
                 i = input("Keep? [Y/n]")
 
-                if (i == "Y" or i == ""):
+                if i == "Y" or i == "":
                     im.save(img_path.replace("data", "output"))
                     new_boxes[img_path] = box
 
     with open("output/boxes.json", "w") as file:
         file.write(json.dumps(new_boxes))
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
@@ -216,6 +233,13 @@ if __name__ == "__main__":
         "--task",
         required=True,
         choices=["train", "inspect", "auto-annotation", "review", "rename"],
+    )
+
+    parser.add_argument(
+        "-e",
+        "--epoch",
+        type=int,
+        default=10
     )
     args = parser.parse_args()
 
@@ -230,10 +254,17 @@ if __name__ == "__main__":
         json_path = "data/torus_ann.json"
         annotations = None
         with open(json_path) as js:
-            annotations = json.load(js)
+            annotations = list(json.load(js).items())
 
-        training_loader = DataLoader(TorusData(dict(list(annotations.items())[20:])), batch_size=20)
-        testing_loader = DataLoader(TorusData(dict(list(annotations.items())[:20])), batch_size=20)
+        random.shuffle(annotations)
+
+        train_ratio = int(0.7 * len(annotations))
+        training_loader = DataLoader(
+            TorusData(dict(annotations[:train_ratio])), batch_size=20
+        )
+        testing_loader = DataLoader(
+            TorusData(dict(annotations[train_ratio:])), batch_size=20
+        )
 
         to = TrainOptions(
             training_loader,
@@ -246,10 +277,8 @@ if __name__ == "__main__":
         )
 
         tr = TrainRig(to)
-        tr.train(500)
+        tr.train(args.epoch)
 
-        model_path = "model.pt"
-        torch.save(model.state_dict(), model_path)
     elif args.task == "inspect":
         st = SingleTorus()
         st.load_state_dict(torch.load("model.pt"))
@@ -261,8 +290,10 @@ if __name__ == "__main__":
         st.load_state_dict(torch.load("model.pt"))
         st.eval()
         AutoAnnotate(st)
-    elif args.task == 'review':
+
+    elif args.task == "review":
         Review()
+
     elif args.task == "rename":
         rename_images(
             path_glob="new_data/*color*.png",
