@@ -9,6 +9,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import Dataset, DataLoader
+from torchvision import transforms
 import numpy as np
 
 from PIL import Image, ImageDraw
@@ -38,21 +39,25 @@ class TrainRig:
         self.tb_writer = self.options.tb_writer
 
     def train(self, epochs):
-        best_train_loss = 0.0
-        best_test_loss = 0.0
+        best_train_loss = np.inf
+        best_test_loss = np.inf
         for epoch in range(epochs):
+            print(f"\nEpoch number: {epoch} ------------------")
             cur_train_loss = self._train_one_epoch(epoch)
             if cur_train_loss < best_train_loss:
+                print("New Smallest Train Loss found, dumping model")
                 best_train_loss = cur_train_loss
                 torch.save(self.model.state_dict(), "train_model.pt")
 
 
             cur_test_loss = self.test()
             if cur_test_loss < best_test_loss:
+                print("New Smallest Test Loss found, dumping model")
                 best_test_loss = cur_test_loss
                 torch.save(self.model.state_dict(), "test_model.pt")
 
     def _train_one_epoch(self, epoch_index):
+        self.model.train()
         batch_loss = 0.0
         for i, data in enumerate(self.training_loader):
             inputs, labels = data
@@ -74,6 +79,7 @@ class TrainRig:
         return batch_loss
 
     def test(self):
+        self.model.eval()
         batch_loss = 0.0
         for i, data in enumerate(self.testing_loader):
             inputs, labels = data
@@ -83,7 +89,7 @@ class TrainRig:
             batch_loss += loss
         if self.log:
             avg_loss = batch_loss / (i + 1)  # loss per batch
-            print(f"\nTest loss: {avg_loss}")
+            print(f"Test loss: {avg_loss}")
         return batch_loss
 
 
@@ -134,19 +140,30 @@ def LoadImage(img_path):
 class SingleTorus(nn.Module):
     def __init__(self):
         super(SingleTorus, self).__init__()
-        self.conv1 = nn.Conv2d(3, 6, 5)
-        self.conv2 = nn.Conv2d(6, 20, 5)
-        self.fc1 = nn.Linear(4 * 360 * 232, 120)
-        self.fc2 = nn.Linear(120, 84)
-        self.fc3 = nn.Linear(84, 5)
+
+        self.dropout = nn.Dropout(0.1)
+
+        self.conv1 = nn.Conv2d(3, 16, 3)
+        self.batch_norm1 = nn.BatchNorm2d(16)
+
+        self.conv2 = nn.Conv2d(16, 32, 3)
+        self.batch_norm2 = nn.BatchNorm2d(32)
+
+        self.conv3 = nn.Conv2d(32, 30, 3)
+        self.batch_norm3 = nn.BatchNorm2d(30)
+
+        self.fc1 = nn.Linear(6 * 362 * 234, 16)
+        self.fc2 = nn.Linear(16, 5)
+        self.norm = transforms.Normalize((0.485, 0.456, 0.406), (0.229, 0.224, 0.225))
 
     def forward(self, x):
-        x = F.relu(self.conv1(x))
-        x = F.relu(self.conv2(x))
-        x = x.view(-1, 5, 4 * 360 * 232)
-        x = F.relu(self.fc1(x))
-        x = F.relu(self.fc2(x))
-        x = self.fc3(x)
+        x = self.norm(x)
+        x = self.batch_norm1(F.relu(self.dropout(self.conv1(x))))
+        x = self.batch_norm2(F.relu(self.dropout(self.conv2(x))))
+        x = self.batch_norm3(F.relu(self.dropout(self.conv3(x))))
+        x = x.view(-1, 5, 6 * 362 * 234)
+        x = F.relu(self.dropout(self.fc1(x)))
+        x = self.fc2(x)
         return x
 
 
@@ -155,7 +172,7 @@ def Inspect(model, path_glob="data/*color*.png"):
 
     for i, img_path in enumerate(found_images):
         print(f"Viewing Image: {i}")
-        out_box = model(LoadImage(img_path)).type(torch.int32)[0, :].numpy()
+        out_box = model(LoadImage(img_path)[None,...]).type(torch.int32)[0, :].numpy()
         with Image.open(img_path) as im:
             for i in range(5):
                 x, y, w, h = out_box[i, :4]
@@ -241,6 +258,13 @@ if __name__ == "__main__":
         type=int,
         default=10
     )
+
+    parser.add_argument(
+        "-m",
+        "--model-name",
+        type=str,
+        default="test_model.pt"
+    )
     args = parser.parse_args()
 
     if args.task == "train":
@@ -256,15 +280,20 @@ if __name__ == "__main__":
         with open(json_path) as js:
             annotations = list(json.load(js).items())
 
+        random.seed(2702)
+        torch.manual_seed(2702)
         random.shuffle(annotations)
 
-        train_ratio = int(0.7 * len(annotations))
+        train_ratio = int(0.9 * len(annotations))
         training_loader = DataLoader(
-            TorusData(dict(annotations[:train_ratio])), batch_size=20
+            TorusData(dict(annotations[:train_ratio])), batch_size=train_ratio
         )
+        print(f"Training Dataset Batch Size: {len(training_loader)}")
+
         testing_loader = DataLoader(
-            TorusData(dict(annotations[train_ratio:])), batch_size=20
+            TorusData(dict(annotations[train_ratio:])), batch_size=10
         )
+        print(f"Test Dataset Batch Size: {len(testing_loader)}")
 
         to = TrainOptions(
             training_loader,
@@ -281,7 +310,7 @@ if __name__ == "__main__":
 
     elif args.task == "inspect":
         st = SingleTorus()
-        st.load_state_dict(torch.load("model.pt"))
+        st.load_state_dict(torch.load(args.model_name))
         st.eval()
         Inspect(st)
 
