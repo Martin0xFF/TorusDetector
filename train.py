@@ -154,9 +154,7 @@ def LoadBox(annotation_region):
 
 def LoadImage(img_path):
     with Image.open(img_path) as im:
-        return transforms.functional.to_tensor(im)
-        # image_data = torch.tensor(np.array(im, dtype=np.float32).transpose(2, 1, 0))
-    # return image_data
+        return transforms.functional.to_tensor(im.convert('RGB'))
 
 class YOLOLayer(nn.Module):
     """Detection layer"""
@@ -237,6 +235,35 @@ class SingleTorus(nn.Module):
         x = self.fc2(x)
         return x
 
+
+class UnsupervisedTorus(nn.Module):
+    def __init__(self):
+        from unsupervised import TorusAutoEncoder
+        super(UnsupervisedTorus, self).__init__()
+        autoencoder = TorusAutoEncoder()
+        autoencoder.load_state_dict(torch.load('un_500_model.pt'))
+
+        self.encoder = autoencoder.encoder
+        self.feature_encoder = autoencoder.feature_encoder
+
+        output_modules = []
+        output_modules.append(nn.ReLU())
+        output_modules.append(nn.Linear(64, 60))
+        output_modules.append(nn.ReLU())
+        self.output_decoder = nn.Sequential(*output_modules)
+
+        self.output = nn.Linear(12, 5)
+
+
+
+    def forward(self, x):
+        x = self.encoder(x)
+        x = x.view(-1, 16 * 232 * 360)
+        x = self.feature_encoder(x)
+        x = self.output_decoder(x)
+        x = x.view(-1, 5, 12)
+        x = self.output(x)
+        return x
 
 def Inspect(model, path_glob="data/*color*.png"):
     found_images = glob.glob(path_glob)
@@ -349,8 +376,7 @@ if __name__ == "__main__":
     if args.task == "train":
         # Learning Rate
         alpha = 1e-4
-        num_anchors = 1
-        model = SingleTorus()
+        model = UnsupervisedTorus()
         loss = torch.nn.MSELoss()
         opt = torch.optim.Adam(model.parameters(), lr=alpha)
 
@@ -363,7 +389,7 @@ if __name__ == "__main__":
         torch.manual_seed(2702)
         random.shuffle(annotations)
 
-        train_ratio = int(0.9 * len(annotations))
+        train_ratio = int(0.8 * len(annotations))
         training_loader = DataLoader(
             TorusData(dict(annotations[:train_ratio])), batch_size=train_ratio
         )
@@ -389,7 +415,7 @@ if __name__ == "__main__":
         tr.train(args.epoch)
 
     elif args.task == "inspect":
-        st = SingleTorus()
+        st = UnsupervisedTorus()
         st.load_state_dict(torch.load(args.model_name))
         st.eval()
         Inspect(st)

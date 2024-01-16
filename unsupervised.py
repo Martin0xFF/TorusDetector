@@ -39,13 +39,13 @@ class TorusAutoEncoder(nn.Module):
             )
             en_modules.append(conv_block)
 
-        self.feature_encoder = nn.Sequential(nn.Linear(16 * 232 * 360, 32), nn.ReLU(),nn.Linear(32, 32))
+        self.feature_encoder = nn.Sequential(nn.Linear(16 * 232 * 360, 64), nn.ReLU(),nn.Linear(64, 64))
 
 
         # Decoder
         de_modules = []
 
-        self.feature_decoder = nn.Sequential(nn.ReLU(), nn.Linear(32, 16 * 232 * 360))
+        self.feature_decoder = nn.Sequential(nn.ReLU(), nn.Linear(64, 16 * 232 * 360))
 
         for i in range(layers):
             convt_block = nn.Sequential(
@@ -58,8 +58,6 @@ class TorusAutoEncoder(nn.Module):
         de_modules.append(
             nn.Sequential(
                 nn.ConvTranspose2d(16, 3, 7),
-                nn.BatchNorm2d(3),
-                nn.ReLU(),
             )
         )
 
@@ -128,7 +126,7 @@ if __name__ == "__main__":
 
         random.shuffle(annotations)
 
-        training_loader = DataLoader(TorusAutoData("field_images"), batch_size=50)
+        training_loader = DataLoader(TorusAutoData("coco/train2014"), batch_size=100)
         print(f"Training Dataset Batch Size: {len(training_loader)}")
 
         to = TrainOptions(
