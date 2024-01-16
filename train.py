@@ -4,6 +4,7 @@ import glob
 import json
 import argparse
 import random
+from typing import List, Tuple
 
 import torch
 import torch.nn as nn
@@ -16,7 +17,7 @@ from PIL import Image, ImageDraw
 
 
 class TrainOptions:
-    def __init__(self, train, test, md, lf, opt, tb, log):
+    def __init__(self, train, test, md, lf, opt, tb, log, device='cpu'):
         self.training_loader = train
         self.testing_loader = test
         self.model = md
@@ -24,6 +25,7 @@ class TrainOptions:
         self.optimizer = opt
         self.tb_writer = tb
         self.log = log
+        self.device = device
 
 
 class TrainRig:
@@ -37,6 +39,9 @@ class TrainRig:
         self.optimizer = self.options.optimizer
         self.log = self.options.log
         self.tb_writer = self.options.tb_writer
+        self.device = self.options.device
+
+        self.model.to(self.device)
 
     def train(self, epochs):
         best_train_loss = np.inf
@@ -60,10 +65,10 @@ class TrainRig:
         self.model.train()
         batch_loss = 0.0
         for i, data in enumerate(self.training_loader):
-            inputs, labels = data
+            inputs, labels = data[0].to(self.device), data[1].to(self.device)
             self.optimizer.zero_grad()
             # Compute the loss and its gradients
-            loss = self.loss_fn(model(inputs), labels)
+            loss = self.loss_fn(self.model(inputs), labels)
             loss.backward()
             # Adjust learning weights
             self.optimizer.step()
@@ -82,9 +87,9 @@ class TrainRig:
         self.model.eval()
         batch_loss = 0.0
         for i, data in enumerate(self.testing_loader):
-            inputs, labels = data
+            inputs, labels = data[0].to(self.device), data[1].to(self.device)
             # Compute the loss and its gradients
-            loss = self.loss_fn(model(inputs), labels)
+            loss = self.loss_fn(self.model(inputs), labels)
 
             batch_loss += loss
         if self.log:
@@ -117,6 +122,18 @@ class TorusData(Dataset):
         image_path = os.path.join("data", self.annotations[idx]["filename"])
         return LoadImage(image_path), LoadBox(self.annotations[idx]["regions"])
 
+class TorusAutoData(Dataset):
+    def __init__(self, annotations, img_dir="data"):
+        self.img_dir = img_dir
+        self.annotations = list(annotations.values())
+
+    def __len__(self):
+        return len(self.annotations)
+
+    def __getitem__(self, idx):
+        image_path = os.path.join("data", self.annotations[idx]["filename"])
+        img_data = LoadImage(image_path)
+        return img_data, img_data
 
 def LoadBox(annotation_region):
     box_data = torch.zeros(5, 5)
@@ -135,6 +152,55 @@ def LoadImage(img_path):
     with Image.open(img_path) as im:
         image_data = torch.tensor(np.array(im, dtype=np.float32).transpose(2, 1, 0))
     return image_data
+
+class YOLOLayer(nn.Module):
+    """Detection layer"""
+
+    def __init__(self, anchors: List[Tuple[int, int]], num_classes: int, new_coords: bool):
+        """
+        Create a YOLO layer
+
+        :param anchors: List of anchors
+        :param num_classes: Number of classes
+        :param new_coords: Whether to use the new coordinate format from YOLO V7
+        """
+        super(YOLOLayer, self).__init__()
+        self.num_anchors = len(anchors)
+        self.num_classes = num_classes
+        self.new_coords = new_coords
+        self.mse_loss = nn.MSELoss()
+        self.bce_loss = nn.BCELoss()
+        self.no = num_classes + 5  # number of outputs per anchor
+        self.grid = torch.zeros(1)  # TODO
+
+        anchors = torch.tensor(list(chain(*anchors))).float().view(-1, 2)
+        self.register_buffer('anchors', anchors)
+        self.register_buffer(
+            'anchor_grid', anchors.clone().view(1, -1, 1, 1, 2))
+        self.stride = None
+
+    def forward(self, x: torch.Tensor, img_size: int) -> torch.Tensor:
+        """
+        Forward pass of the YOLO layer
+
+        :param x: Input tensor
+        :param img_size: Size of the input image
+        """
+        stride = img_size // x.size(2)
+        self.stride = stride
+        bs, _, ny, nx = x.shape  # x(bs,255,20,20) to x(bs,3,20,20,85)
+        x = x.view(bs, self.num_anchors, self.no, ny, nx).permute(0, 1, 3, 4, 2).contiguous()
+
+        if not self.training:  # inference
+            if self.grid.shape[2:4] != x.shape[2:4]:
+                self.grid = self._make_grid(nx, ny).to(x.device)
+
+            x[..., 0:2] = (x[..., 0:2].sigmoid() + self.grid) * stride  # xy
+            x[..., 2:4] = torch.exp(x[..., 2:4]) * self.anchor_grid # wh
+            x[..., 4:] = x[..., 4:].sigmoid() # conf, cls
+            x = x.view(bs, -1, self.no)
+
+        return x
 
 
 class SingleTorus(nn.Module):
@@ -265,6 +331,14 @@ if __name__ == "__main__":
         type=str,
         default="test_model.pt"
     )
+
+    parser.add_argument(
+        "-d",
+        "--device",
+        type=str,
+        default="cpu",
+        choices = ["mps", "cuda", "cpu"]
+    )
     args = parser.parse_args()
 
     if args.task == "train":
@@ -299,10 +373,11 @@ if __name__ == "__main__":
             training_loader,
             testing_loader,
             model,
-            torch.nn.MSELoss(),
+            loss,
             opt,
             None,
             True,
+            args.device
         )
 
         tr = TrainRig(to)
