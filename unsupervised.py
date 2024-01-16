@@ -19,7 +19,7 @@ from train import TorusAutoData, TrainOptions, TrainRig, LoadImage
 class TorusAutoEncoder(nn.Module):
     def __init__(self):
         super(TorusAutoEncoder, self).__init__()
-        layers = 3
+        layers = 1
 
         # Encoder
         en_modules = []
@@ -39,8 +39,13 @@ class TorusAutoEncoder(nn.Module):
             )
             en_modules.append(conv_block)
 
+        self.feature_encoder = nn.Sequential(nn.Linear(16 * 232 * 360, 32), nn.ReLU(),nn.Linear(32, 32))
+
+
         # Decoder
         de_modules = []
+
+        self.feature_decoder = nn.Sequential(nn.ReLU(), nn.Linear(32, 16 * 232 * 360))
 
         for i in range(layers):
             convt_block = nn.Sequential(
@@ -63,18 +68,24 @@ class TorusAutoEncoder(nn.Module):
 
     def forward(self, x):
         x = self.encoder(x)
+        x = x.reshape(-1, 16 * 232 * 360)
+        x = self.feature_encoder(x)
+        x = self.feature_decoder(x)
+        x = x.reshape(-1, 16, 232, 360)
         x = self.decoder(x)
         return x
 
 
-def InspectAutoEncoder(model, path_glob="data/*color*.png"):
+def InspectAutoEncoder(model, path_glob="data/*color*.png", max_num_images=0):
     found_images = glob.glob(path_glob)
 
     for i, img_path in enumerate(found_images):
         print(f"Viewing Image: {i}")
         out_im = (255 * model(LoadImage(img_path)[None, ...])).type(torch.uint8).numpy()
-        out_im = out_im[0, ...].transpose([2, 1, 0])
-        im = Image.fromarray(out_im).save(img_path.replace("data", "output"))
+        out_im = out_im[0, ...].transpose([1, 2, 0])
+        im = Image.fromarray(out_im).save("output/" + img_path.split("/")[-1])
+        if max_num_images and max_num_images == i:
+            break
 
 
 if __name__ == "__main__":
@@ -138,4 +149,4 @@ if __name__ == "__main__":
         tae = TorusAutoEncoder()
         tae.load_state_dict(torch.load(args.model_name))
         tae.eval()
-        InspectAutoEncoder(tae)
+        InspectAutoEncoder(tae, "data/*color*.png", max_num_images=20)
