@@ -55,11 +55,12 @@ class TrainRig:
                 torch.save(self.model.state_dict(), "train_model.pt")
 
 
-            cur_test_loss = self.test()
-            if cur_test_loss < best_test_loss:
-                print("New Smallest Test Loss found, dumping model")
-                best_test_loss = cur_test_loss
-                torch.save(self.model.state_dict(), "test_model.pt")
+            if self.testing_loader is not None:
+                cur_test_loss = self.test()
+                if cur_test_loss < best_test_loss:
+                    print("New Smallest Test Loss found, dumping model")
+                    best_test_loss = cur_test_loss
+                    torch.save(self.model.state_dict(), "test_model.pt")
 
     def _train_one_epoch(self, epoch_index):
         self.model.train()
@@ -123,16 +124,19 @@ class TorusData(Dataset):
         return LoadImage(image_path), LoadBox(self.annotations[idx]["regions"])
 
 class TorusAutoData(Dataset):
-    def __init__(self, annotations, img_dir="data"):
+    def __init__(self, img_dir="field_images"):
         self.img_dir = img_dir
-        self.annotations = list(annotations.values())
+        self.image_paths = glob.glob(f"{img_dir}/*.jpg") + glob.glob(f"{img_dir}/*.png")
 
     def __len__(self):
-        return len(self.annotations)
+        return len(self.image_paths)
 
     def __getitem__(self, idx):
-        image_path = os.path.join("data", self.annotations[idx]["filename"])
-        img_data = LoadImage(image_path)
+        image_path = self.image_paths[idx]
+        # h,w - 240,368 from pi camera
+        resize_fn = transforms.Resize((240, 368), antialias=True)
+        img_data = resize_fn(LoadImage(image_path))
+        img_data = img_data[:3, ...]
         return img_data, img_data
 
 def LoadBox(annotation_region):
@@ -150,8 +154,9 @@ def LoadBox(annotation_region):
 
 def LoadImage(img_path):
     with Image.open(img_path) as im:
-        image_data = torch.tensor(np.array(im, dtype=np.float32).transpose(2, 1, 0))
-    return image_data
+        return transforms.functional.to_tensor(im)
+        # image_data = torch.tensor(np.array(im, dtype=np.float32).transpose(2, 1, 0))
+    # return image_data
 
 class YOLOLayer(nn.Module):
     """Detection layer"""
