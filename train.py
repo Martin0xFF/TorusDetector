@@ -5,6 +5,7 @@ import json
 import argparse
 import random
 from typing import List, Tuple
+from tqdm import tqdm
 
 import torch
 import torch.nn as nn
@@ -65,7 +66,7 @@ class TrainRig:
     def _train_one_epoch(self, epoch_index):
         self.model.train()
         batch_loss = 0.0
-        for i, data in enumerate(self.training_loader):
+        for i, data in tqdm(enumerate(self.training_loader)):
             inputs, labels = data[0].to(self.device), data[1].to(self.device)
             self.optimizer.zero_grad()
             # Compute the loss and its gradients
@@ -76,7 +77,7 @@ class TrainRig:
 
             batch_loss += loss
         if self.log:
-            avg_epoch_loss = batch_loss / (i + 1)  # loss per batch
+            avg_epoch_loss = batch_loss / len(self.training_loader)  # loss per element
             print(f"Epoch {epoch_index} loss: {avg_epoch_loss}")
             if self.tb_writer is not None:
                 tb_x = epoch_index * len(self.training_loader) + i + 1
@@ -94,7 +95,7 @@ class TrainRig:
 
             batch_loss += loss
         if self.log:
-            avg_loss = batch_loss / (i + 1)  # loss per batch
+            avg_loss = batch_loss / len(self.testing_loader)  # loss per entry
             print(f"Test loss: {avg_loss}")
         return batch_loss
 
@@ -124,9 +125,11 @@ class TorusData(Dataset):
         return LoadImage(image_path), LoadBox(self.annotations[idx]["regions"])
 
 class TorusAutoData(Dataset):
-    def __init__(self, img_dir="field_images"):
+    def __init__(self, img_dir="field_images", limit=0):
         self.img_dir = img_dir
         self.image_paths = glob.glob(f"{img_dir}/*.jpg") + glob.glob(f"{img_dir}/*.png")
+        if limit:
+            self.image_paths = self.image_paths[0:limit]
 
     def __len__(self):
         return len(self.image_paths)
