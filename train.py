@@ -18,7 +18,7 @@ from PIL import Image, ImageDraw
 
 
 class TrainOptions:
-    def __init__(self, train, test, md, lf, opt, tb, log, device='cpu'):
+    def __init__(self, train, test, md, lf, opt, tb, log, device="cpu"):
         self.training_loader = train
         self.testing_loader = test
         self.model = md
@@ -54,7 +54,6 @@ class TrainRig:
                 print("New Smallest Train Loss found, dumping model")
                 best_train_loss = cur_train_loss
                 torch.save(self.model.state_dict(), "train_model.pt")
-
 
             if self.testing_loader is not None:
                 cur_test_loss = self.test()
@@ -124,6 +123,7 @@ class TorusData(Dataset):
         image_path = os.path.join("data", self.annotations[idx]["filename"])
         return LoadImage(image_path), LoadBox(self.annotations[idx]["regions"])
 
+
 class TorusAutoData(Dataset):
     def __init__(self, img_dir="field_images", limit=0):
         self.img_dir = img_dir
@@ -136,18 +136,22 @@ class TorusAutoData(Dataset):
 
     def __getitem__(self, idx):
         image_path = self.image_paths[idx]
-        # h,w - 240,368 from pi camera
-        resize_fn = transforms.Resize((240, 368), antialias=True)
-        img_data = resize_fn(LoadImage(image_path))
-        img_data = img_data[:3, ...]
+        img_data = LoadImage(image_path)
         return img_data, img_data
 
+
 def LoadBox(annotation_region):
-    box_data = torch.zeros(5, 5)
+    box_data = torch.zeros(5, 4)
     for i, region in enumerate(annotation_region):
         box = region["shape_attributes"]
         box_data[i, :] = torch.tensor(
-            [box["x"], box["y"], box["width"], box["height"], 1],
+            [
+                box["x"] / 368.0,
+                box["y"] / 240.0,
+                box["width"] / 368.0,
+                box["height"] / 240.0,
+                # 1.0,
+            ],
             dtype=torch.float32,
         )
         if i > 4:
@@ -157,12 +161,16 @@ def LoadBox(annotation_region):
 
 def LoadImage(img_path):
     with Image.open(img_path) as im:
-        return transforms.functional.to_tensor(im.convert('RGB'))
+        # h,w - 240,368 from pi camera
+        return transforms.functional.to_tensor(im.convert("RGB").resize((368, 240)))
+
 
 class YOLOLayer(nn.Module):
     """Detection layer"""
 
-    def __init__(self, anchors: List[Tuple[int, int]], num_classes: int, new_coords: bool):
+    def __init__(
+        self, anchors: List[Tuple[int, int]], num_classes: int, new_coords: bool
+    ):
         """
         Create a YOLO layer
 
@@ -180,9 +188,8 @@ class YOLOLayer(nn.Module):
         self.grid = torch.zeros(1)  # TODO
 
         anchors = torch.tensor(list(chain(*anchors))).float().view(-1, 2)
-        self.register_buffer('anchors', anchors)
-        self.register_buffer(
-            'anchor_grid', anchors.clone().view(1, -1, 1, 1, 2))
+        self.register_buffer("anchors", anchors)
+        self.register_buffer("anchor_grid", anchors.clone().view(1, -1, 1, 1, 2))
         self.stride = None
 
     def forward(self, x: torch.Tensor, img_size: int) -> torch.Tensor:
@@ -195,15 +202,19 @@ class YOLOLayer(nn.Module):
         stride = img_size // x.size(2)
         self.stride = stride
         bs, _, ny, nx = x.shape  # x(bs,255,20,20) to x(bs,3,20,20,85)
-        x = x.view(bs, self.num_anchors, self.no, ny, nx).permute(0, 1, 3, 4, 2).contiguous()
+        x = (
+            x.view(bs, self.num_anchors, self.no, ny, nx)
+            .permute(0, 1, 3, 4, 2)
+            .contiguous()
+        )
 
         if not self.training:  # inference
             if self.grid.shape[2:4] != x.shape[2:4]:
                 self.grid = self._make_grid(nx, ny).to(x.device)
 
             x[..., 0:2] = (x[..., 0:2].sigmoid() + self.grid) * stride  # xy
-            x[..., 2:4] = torch.exp(x[..., 2:4]) * self.anchor_grid # wh
-            x[..., 4:] = x[..., 4:].sigmoid() # conf, cls
+            x[..., 2:4] = torch.exp(x[..., 2:4]) * self.anchor_grid  # wh
+            x[..., 4:] = x[..., 4:].sigmoid()  # conf, cls
             x = x.view(bs, -1, self.no)
 
         return x
@@ -240,47 +251,62 @@ class SingleTorus(nn.Module):
 
 
 class UnsupervisedTorus(nn.Module):
-    def __init__(self):
-        from unsupervised import TorusAutoEncoder
+    def __init__(self, previous="coco_2650_epoch_unsupervised.pt", device="cpu"):
         super(UnsupervisedTorus, self).__init__()
-        autoencoder = TorusAutoEncoder()
-        autoencoder.load_state_dict(torch.load('un_500_model.pt'))
+        from unsupervised import TorusAutoEncoder
 
-        self.encoder = autoencoder.encoder
-        self.feature_encoder = autoencoder.feature_encoder
+        autoencoder = TorusAutoEncoder()
+        if previous:
+            print(f"Loading previous model: {previous}")
+            autoencoder.load_state_dict(
+                torch.load(previous, map_location=torch.device(device))
+            )
+
+        self.stem = autoencoder.stem
+        self.blocks = autoencoder.blocks
+        self.feature_encoder = nn.Sequential(
+            nn.Conv2d(24, 24, 3, stride=1),
+            nn.BatchNorm2d(24),
+            nn.ReLU(),
+        )
 
         output_modules = []
+        output_modules.append(nn.ReLU())
+        output_modules.append(nn.Linear(24 * 58 * 90, 64))
         output_modules.append(nn.ReLU())
         output_modules.append(nn.Linear(64, 60))
         output_modules.append(nn.ReLU())
         self.output_decoder = nn.Sequential(*output_modules)
 
-        self.output = nn.Linear(12, 5)
-
-
+        self.output = nn.Sequential(nn.Linear(12, 4), nn.Sigmoid())
 
     def forward(self, x):
-        x = self.encoder(x)
-        x = x.view(-1, 16 * 232 * 360)
+        x = self.stem(x)
+        for stage in self.blocks:
+            for block in stage:
+                x = block(x)
+
         x = self.feature_encoder(x)
+        x = x.reshape(-1, 24 * 58 * 90)
         x = self.output_decoder(x)
         x = x.view(-1, 5, 12)
         x = self.output(x)
         return x
+
 
 def Inspect(model, path_glob="data/*color*.png"):
     found_images = glob.glob(path_glob)
 
     for i, img_path in enumerate(found_images):
         print(f"Viewing Image: {i}")
-        out_box = model(LoadImage(img_path)[None,...]).type(torch.int32)[0, :].numpy()
+        out_box = model(LoadImage(img_path)[None, ...])[0, :].detach().numpy()
         with Image.open(img_path) as im:
             for i in range(5):
-                x, y, w, h = out_box[i, :4]
-                bounds = ((x, y), (x + w, y + h))
-                if w <= 0 or h <= 0:
+                x, y, w, h = out_box[i,:]
+                bounds = ((368 * x, 240 * y), (368 * (x + w), 240 * (y + h)))
+                if w <= 0 or h <= 0 :
                     continue
-                print(bounds)
+                print(out_box[i,:])
 
                 if (out_box[i, :4] < 0).any():
                     print(f"Skipping: {img_path} because bounds are negative.")
@@ -342,6 +368,9 @@ def Review(path_glob="data/*color*.png"):
 
 
 if __name__ == "__main__":
+
+    random.seed(6969)
+    torch.manual_seed(6969)
     parser = argparse.ArgumentParser(
         prog="train", description="trains basic torus detectors for fun", epilog="---"
     )
@@ -353,26 +382,12 @@ if __name__ == "__main__":
         choices=["train", "inspect", "auto-annotation", "review", "rename"],
     )
 
-    parser.add_argument(
-        "-e",
-        "--epoch",
-        type=int,
-        default=10
-    )
+    parser.add_argument("-e", "--epoch", type=int, default=10)
+
+    parser.add_argument("-m", "--model-name", type=str, default="test_model.pt")
 
     parser.add_argument(
-        "-m",
-        "--model-name",
-        type=str,
-        default="test_model.pt"
-    )
-
-    parser.add_argument(
-        "-d",
-        "--device",
-        type=str,
-        default="cpu",
-        choices = ["mps", "cuda", "cpu"]
+        "-d", "--device", type=str, default="cpu", choices=["mps", "cuda", "cpu"]
     )
     args = parser.parse_args()
 
@@ -381,6 +396,8 @@ if __name__ == "__main__":
         alpha = 1e-4
         model = UnsupervisedTorus()
         loss = torch.nn.MSELoss()
+
+        print(model)
         opt = torch.optim.Adam(model.parameters(), lr=alpha)
 
         json_path = "data/torus_ann.json"
@@ -388,15 +405,13 @@ if __name__ == "__main__":
         with open(json_path) as js:
             annotations = list(json.load(js).items())
 
-        random.seed(2702)
-        torch.manual_seed(2702)
         random.shuffle(annotations)
 
         train_ratio = int(0.8 * len(annotations))
         training_loader = DataLoader(
             TorusData(dict(annotations[:train_ratio])), batch_size=train_ratio
         )
-        print(f"Training Dataset Batch Size: {len(training_loader)}")
+        print(f"Training Number Steps per Epoch: {len(training_loader)}")
 
         testing_loader = DataLoader(
             TorusData(dict(annotations[train_ratio:])), batch_size=10
@@ -404,14 +419,7 @@ if __name__ == "__main__":
         print(f"Test Dataset Batch Size: {len(testing_loader)}")
 
         to = TrainOptions(
-            training_loader,
-            testing_loader,
-            model,
-            loss,
-            opt,
-            None,
-            True,
-            args.device
+            training_loader, testing_loader, model, loss, opt, None, True, args.device
         )
 
         tr = TrainRig(to)
@@ -419,13 +427,17 @@ if __name__ == "__main__":
 
     elif args.task == "inspect":
         st = UnsupervisedTorus()
-        st.load_state_dict(torch.load(args.model_name))
+        st.load_state_dict(
+            torch.load(args.model_name, map_location=torch.device(args.device))
+        )
         st.eval()
         Inspect(st)
 
     elif args.task == "auto-annotation":
         st = SingleTorus()
-        st.load_state_dict(torch.load("model.pt"))
+        st.load_state_dict(
+            torch.load("model.pt", map_location=torch.device(args.device))
+        )
         st.eval()
         AutoAnnotate(st)
 

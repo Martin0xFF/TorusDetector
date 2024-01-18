@@ -319,7 +319,9 @@ if __name__ == "__main__":
         model = TorusAutoEncoder()
         if args.cont == True:
             print(f"picking up from previous model : {args.model_name} ")
-            model.load_state_dict(torch.load(args.model_name))
+            model.load_state_dict(
+                torch.load(args.model_name, map_location=torch.device(args.device_name))
+            )
 
         loss = torch.nn.MSELoss()
         opt = torch.optim.Adam(model.parameters(), lr=alpha)
@@ -353,11 +355,11 @@ if __name__ == "__main__":
 
     elif args.task == "inspect":
         tae = TorusAutoEncoder()
-        tae.load_state_dict(torch.load(args.model_name))
+        tae.load_state_dict(torch.load(args.model_name, map_location=torch.device(args.device_name)))
         tae.eval()
         InspectAutoEncoder(
             tae,
-            "../detect/data/coco/train2017/*.jpg",
+            "field_images/*.jpg",
             max_num_images=50
             # tae, "data/*color*.png", max_num_images=20
         )
